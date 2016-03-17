@@ -14,7 +14,23 @@ app.get('/', function (req, res) {
 });
 
 app.get('/todos', function (req, res) {
-	res.json(todos);
+
+	var queryParams = req.query;
+	console.log(queryParams);
+	var filteredTodos = todos;
+
+	if (queryParams.hasOwnProperty('completed')) {
+
+		if (queryParams.completed === 'true') {
+			queryParams.completed = true;
+		} else {
+			queryParams.completed = false;
+		}
+
+		filteredTodos = _.where(filteredTodos, {completed: queryParams.completed});
+	}
+
+	res.json(filteredTodos);
 });
 
 app.get('/todos/:id', function (req, res) {
@@ -28,7 +44,9 @@ app.get('/todos/:id', function (req, res) {
 	}
 });
 
+
 app.post('/todos', function (req, res) {
+
 
 	// use _.pick to select valid fields only
 	var body = _.pick(req.body, 'description', 'completed');
@@ -88,6 +106,7 @@ app.put('/todos/:id', function(req, res) {
 	}
 
 	//todos = _.without(todos, matchedTodo);
+	// matchedTodo was passed by ref so no need to update todos
 	matchedTodo = _.extend(matchedTodo, validAttributes);
 	//todos.push(matchedTodo);
 
