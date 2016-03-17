@@ -13,13 +13,13 @@ app.get('/', function (req, res) {
 	res.send('Todo API Root');
 });
 
+// GET /todos?completed=true&q=house
 app.get('/todos', function (req, res) {
 
 	var queryParams = req.query;
-	console.log(queryParams);
 	var filteredTodos = todos;
 
-	if (queryParams.hasOwnProperty('completed')) {
+	if (queryParams.hasOwnProperty('completed') && queryParams.completed.length > 0) {
 
 		if (queryParams.completed === 'true') {
 			queryParams.completed = true;
@@ -30,9 +30,19 @@ app.get('/todos', function (req, res) {
 		filteredTodos = _.where(filteredTodos, {completed: queryParams.completed});
 	}
 
+	if (queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
+		filteredTodos = _.filter(filteredTodos, function(todo) {
+			return todo.description.toLowerCase().indexOf(queryParams.q.toLowerCase()) > -1;
+			// if (todo.description.indexOf(queryParams.q) > 0) {
+			// 	return todo;
+			// }
+		});
+	}	
+
 	res.json(filteredTodos);
 });
 
+// GET /todos/:id
 app.get('/todos/:id', function (req, res) {
 	var todoId = parseInt(req.params.id, 10);
 	var matchedTodo = _.findWhere(todos, {id: todoId});
@@ -44,7 +54,7 @@ app.get('/todos/:id', function (req, res) {
 	}
 });
 
-
+// POST /todos
 app.post('/todos', function (req, res) {
 
 
