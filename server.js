@@ -29,18 +29,20 @@ app.get('/todos/:id', function (req, res) {
 });
 
 app.post('/todos', function (req, res) {
-	var body = req.body;
-	var cleanBody = _.pick(body, 'description', 'completed');
-	if (! _.isBoolean(cleanBody.completed) || ! _.isString(cleanBody.description) || cleanBody.description.trim().length === 0 ) {
+
+	// use _.pick to select valid fields only
+	var body = _.pick(req.body, 'description', 'completed');
+
+	if (! _.isBoolean(body.completed) || ! _.isString(body.description) || body.description.trim().length === 0 ) {
 		return res.status(400).send();
 	}
 	
 	// update description with trimmed value
-	cleanBody.description = cleanBody.description.trim();
+	body.description = body.description.trim();
 
-	cleanBody.id = todoNextId++;
-	todos.push(cleanBody);
-	res.json(cleanBody);
+	body.id = todoNextId++;
+	todos.push(body);
+	res.json(body);
 
 });
 
