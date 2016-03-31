@@ -1,3 +1,4 @@
+// need to add foreign key to user
 module.exports = function (sequelize, DataTypes) {
 	return sequelize.define('todo', {
 		description: {

@@ -134,6 +134,76 @@ app.put('/todos/:id', function(req, res) {
 	})
 });
 
+// GET /todos?completed=true&q=house
+app.get('/users', function(req, res) {
+
+	var query = req.query;
+	var where = {};
+
+	if (query.hasOwnProperty('q') && query.q.length > 0) {
+		where.email = {
+			$like: '%' + query.q + '%'
+		};
+	}
+
+	db.user.findAll({where: where}).then(function (users) {
+		res.json(users)
+	}, function (e) {
+		res.status(500).send();
+	})
+
+});
+
+// POST /users
+app.post('/users', function(req, res) {
+
+	// use _.pick to select valid fields only
+	var body = _.pick(req.body, 'email', 'password');
+
+	if (!_.isString(body.email) || body.password.trim().length === 0) {
+		return res.status(400).send();
+	}
+
+	// update email with trimmed value
+	body.email = body.email.trim();
+
+ 	db.user.create(body).then(function (user) {
+		res.json(user.toJSON());
+ 	}, function(e) {
+ 		res.status(400).json(e);
+ 	});
+});
+
+// PUT /todos/:id
+app.put('/users/:id', function(req, res) {
+
+	var userId = parseInt(req.params.id, 10);
+	var body = _.pick(req.body, 'email', 'password');
+	var attributes = {};
+
+	if (body.hasOwnProperty('email')) {
+		attributes.email = body.email;
+	} 
+
+	if (body.hasOwnProperty('password')) {
+		attributes.password = body.password;
+	}
+	console.log("ATTRS = " + attributes.password);
+	db.user.findById(userId).then(function (user) {
+		if (user) {
+			user.update(attributes).then(function (user) {
+		res.json(user.toJSON());
+	}, function (e) {
+		res.status(400).send(e);
+	});
+		} else {
+			res.status(404).send();
+		}
+	}, function () {
+		res.status(500).send();
+	})
+});
+
 db.sequelize.sync().then(function () {
 	app.listen(PORT, function() {
 		console.log('Express listening on port ' + PORT + " ....");
