@@ -188,7 +188,6 @@ app.put('/users/:id', function(req, res) {
 	if (body.hasOwnProperty('password')) {
 		attributes.password = body.password;
 	}
-	console.log("ATTRS = " + attributes.password);
 	db.user.findById(userId).then(function (user) {
 		if (user) {
 			user.update(attributes).then(function (user) {
