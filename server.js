@@ -168,13 +168,13 @@ app.post('/users', function(req, res) {
 	body.email = body.email.trim();
 
  	db.user.create(body).then(function (user) {
-		res.json(user.toJSON());
+		res.json(user.toPublicJSON());
  	}, function(e) {
  		res.status(400).json(e);
  	});
 });
 
-// PUT /todos/:id
+// PUT /users/:id
 app.put('/users/:id', function(req, res) {
 
 	var userId = parseInt(req.params.id, 10);
@@ -203,7 +203,7 @@ app.put('/users/:id', function(req, res) {
 	})
 });
 
-db.sequelize.sync().then(function () {
+db.sequelize.sync({force: true}).then(function () {
 	app.listen(PORT, function() {
 		console.log('Express listening on port ' + PORT + " ....");
 	});
