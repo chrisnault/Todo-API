@@ -212,13 +212,13 @@ app.post('/users/login', function (req, res) {
 	
 	db.user.authenticate(body).then(function (user) {
 		res.status(200).json(user.toPublicJSON());
-	}, function (e) {
-		res.status(401).send(e);
+	}, function () {
+		res.status(401).send();
 	});
 });
 
-//db.sequelize.sync({force: true}).then(function () {
-db.sequelize.sync().then(function () {
+//db.sequelize.sync().then(function () {
+db.sequelize.sync({force: true}).then(function () {
 	app.listen(PORT, function() {
 		console.log('Express listening on port ' + PORT + " ....");
 	});
